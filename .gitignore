@@ -1,0 +1,41 @@
+# ==========================================
+# Diretórios de compilação e saída
+# ==========================================
+build/
+bin/
+out/
+
+# ==========================================
+# Arquivos gerados pelo GHDL
+# ==========================================
+*.cf
+*.o
+work-obj93.cf
+e~*.o
+
+# ==========================================
+# Arquivos de simulação e ondas (GTKWave)
+# ==========================================
+*.vcd
+*.ghw
+*.gtkw
+*.sav
+
+# ==========================================
+# Executáveis (Linux e Windows)
+# ==========================================
+*.out
+*.exe
+*.dll
+
+# ==========================================
+# Arquivos temporários do Sistema e Editores
+# ==========================================
+# Linux / Arquivos de backup de editores
+*~
+*.swp
+*.swo
+.DS_Store
+
+# Diretórios de IDEs (opcional, caso usem VSCode)
+.vscode/
