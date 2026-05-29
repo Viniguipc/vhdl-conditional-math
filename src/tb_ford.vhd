@@ -3,26 +3,26 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
--- 2. Entidade do Testbench (Sempre vazia)
+-- 2. Entidade Vazia
 entity tb_ford is
 end tb_ford;
 
 -- 3. Arquitetura
 architecture behavior of tb_ford is
 
-    -- Sinais internos para conectar à entidade (DUT - Device Under Test)
+    -- Sinais de conexão com o DUT (Device Under Test)
     signal clk_tb : STD_LOGIC := '0';
     signal rst_tb : STD_LOGIC := '0';
-    signal A_tb   : UNSIGNED(3 downto 0) := (others => '0');
-    signal B_tb   : UNSIGNED(3 downto 0) := (others => '0');
-    signal Z_tb   : UNSIGNED(5 downto 0);
+    signal A_tb   : SIGNED(7 downto 0) := (others => '0');
+    signal B_tb   : SIGNED(7 downto 0) := (others => '0');
+    signal Z_tb   : SIGNED(31 downto 0);
 
-    -- Constante para o período do clock
+    -- Período do Clock
     constant CLK_PERIOD : time := 10 ns;
 
 begin
 
-    -- Instanciação da entidade a ser testada (DUT)
+    -- Instanciação do seu circuito
     uut: entity work.ford
         port map (
             clk => clk_tb,
@@ -32,7 +32,7 @@ begin
             Z   => Z_tb
         );
 
-    -- Processo de geração do Clock
+    -- Processo gerador de Clock
     clk_process : process
     begin
         clk_tb <= '0';
@@ -41,39 +41,36 @@ begin
         wait for CLK_PERIOD / 2;
     end process;
 
-    -- Processo de estímulos (Aplicando os testes)
+    -- Processo de Estímulos
     stim_process : process
     begin
-        -- 1. Aplicando o Reset
+        -- 1. Reset inicial
         rst_tb <= '1';
         wait for 20 ns;
         rst_tb <= '0';
         wait for 10 ns;
 
-        -- 2. Casos de Teste
+        -- 2. Teste 1: A < B (Deve ativar o caminho sel1)
+        A_tb <= to_signed(1, 8);
+        B_tb <= to_signed(2, 8);
+        wait for 20 ns;
+
+        -- 3. Teste 2: A > B (Deve ativar o caminho sel2)
+        A_tb <= to_signed(3, 8);
+        B_tb <= to_signed(2, 8);
+        wait for 20 ns;
+
+        -- 4. Teste 3: Com números negativos e A < B
+        A_tb <= to_signed(-2, 8);
+        B_tb <= to_signed(4, 8);
+        wait for 20 ns;
         
-        -- Teste 1: 0 + 0
-        A_tb <= to_unsigned(0, 4);
-        B_tb <= to_unsigned(0, 4);
+        -- 5. Teste 4: Valores iguais (A = B) -> Cai no 'else' (sel2)
+        A_tb <= to_signed(2, 8);
+        B_tb <= to_signed(2, 8);
         wait for 20 ns;
 
-        -- Teste 2: 5 + 3 = 8
-        A_tb <= to_unsigned(5, 4);
-        B_tb <= to_unsigned(3, 4);
-        wait for 20 ns;
-
-        -- Teste 3: 15 + 1 = 16 (Testando transporte de bit / overflow de 4 bits)
-        A_tb <= to_unsigned(15, 4); -- 1111 em binário
-        B_tb <= to_unsigned(1, 4);  -- 0001 em binário
-        wait for 20 ns;
-
-        -- Teste 4: Valor máximo (15 + 15 = 30)
-        A_tb <= to_unsigned(15, 4);
-        B_tb <= to_unsigned(15, 4);
-        wait for 20 ns;
-
-        -- Fim da simulação (Pausa infinita para não repetir)
-        wait;
+        wait; -- Fim da simulação
     end process;
 
 end behavior;
