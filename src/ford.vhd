@@ -44,8 +44,6 @@ architecture logica of ford is
 	signal soma1 :signed (31 downto 0);
 	signal soma2 :signed (31 downto 0);
 	
-	signal temp :signed (31 downto 0);
-	
 	-- 3.1.3 Resultado nos seletores
 	signal sel1 : signed (31 downto 0);
 	signal sel2 : signed (31 downto 0);
@@ -72,12 +70,29 @@ begin
 		mult3 <= 1;
 		
 		-- 3^b
-		process(b)
+		process(b32)
+			variable temp : signed(31 downto 0);
+			variable ib : integer;
 		begin
-			for i in 1 to b loop
-				temp <= mult3 * 3;
-				mult3 <= temp
-			end loop
+			ib := to_integer(b32);
+			temp := to_signed(1, 32);
+			
+			if ib > 0 and ib <= 19 then
+				for i in 1 to 19 loop
+					temp := resize(temp * 3, 32);
+				end loop
+			else
+				if ib < 0 then
+					temp := to_signed(0, 32);
+				else
+					if ib > 19 then
+						temp := to_signed(2147483647, 32);
+			end if;
+			
+			mult3 <= temp;
+			
+		end process
+				
 		end process
 		
 		-- 3.2.3 Multiplicações
