@@ -44,6 +44,8 @@ architecture logica of ford is
 	signal soma1 :signed (31 downto 0);
 	signal soma2 :signed (31 downto 0);
 	
+	signal temp :signed (31 downto 0);
+	
 	-- 3.1.3 Resultado nos seletores
 	signal sel1 : signed (31 downto 0);
 	signal sel2 : signed (31 downto 0);
@@ -67,10 +69,21 @@ begin
 		
 		b1 <= resize(b32 * b32, 32); -- b²
 		
+		mult3 <= 1;
+		
+		-- 3^b
+		process(b)
+		begin
+			for i in 1 to b loop
+				temp <= mult3 * 3;
+				mult3 <= temp
+			end loop
+		end process
+		
 		-- 3.2.3 Multiplicações
 		mult1 <= resize(a2 * 5, 32); -- 5a²
 		mult2 <= resize(b1 * 2, 32); -- 2b²
-		mult3 <= resize(b32 * 3, 32); -- 3b
+		-- mult3 <= resize(b32 * 3, 32); -- 3b
 		mult4 <= resize(b32 * 5, 32); -- 5b
 		
 		-- 3.2.5 Divisões
@@ -84,6 +97,8 @@ begin
 		sel1 <= (soma1 + mult3); -- 5a⁴ + 2b² + 3b
 		sel2 <= resize(soma2 * (-1), 32); -- -((a³ / b) + 5b)
 		
+		
+		-- Mux
 		process(a, b, sel1, sel2)
 		begin
 			if (a < b) then
