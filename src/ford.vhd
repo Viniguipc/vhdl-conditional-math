@@ -67,8 +67,6 @@ begin
 		
 		b1 <= resize(b32 * b32, 32); -- b²
 		
-		mult3 <= 1;
-		
 		-- 3^b
 		process(b32)
 			variable temp : signed(31 downto 0);
@@ -79,21 +77,19 @@ begin
 			
 			if ib > 0 and ib <= 19 then
 				for i in 1 to 19 loop
-					temp := resize(temp * 3, 32);
-				end loop
-			else
-				if ib < 0 then
-					temp := to_signed(0, 32);
-				else
-					if ib > 19 then
-						temp := to_signed(2147483647, 32);
+					if i <= ib then
+						temp := resize(temp * 3, 32);
+					end if;
+				end loop;
+			elsif ib < 0 then
+				temp := to_signed(0, 32);
+			elsif ib > 19 then
+				temp := to_signed(2147483647, 32);
 			end if;
 			
 			mult3 <= temp;
 			
-		end process
-				
-		end process
+		end process;
 		
 		-- 3.2.3 Multiplicações
 		mult1 <= resize(a2 * 5, 32); -- 5a²
